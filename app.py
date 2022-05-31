@@ -5,23 +5,38 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import (
+  Flask, 
+  render_template, 
+  request, 
+  Response, 
+  flash, 
+  redirect, 
+  url_for
+)
+
 from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-from models import db, Venue, Artist
+from models import db, Venue, Artist, Show
 from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
-app = Flask(__name__)
+def create_app():
+  app = Flask(__name__)
+  app.config.from_object('config')
+
+  with app.app_context():
+    db.init_app(app)
+  return app
+
+app = create_app()
 moment = Moment(app)
-app.config.from_object('config')
-db.init_app(app)
+# db.init_app(app)
 
 # TODO: connect to a local postgresql database
 migrate = Migrate(app, db)
@@ -55,43 +70,60 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+
+  # Get all the venues from the database
+  venues = Venue.query.all()
+
+  # Get the state and city and remove duplicates
+  unique_venues = Venue.query.distinct(Venue.city, Venue.state).all()
+
+  data = [] # An array where the data that will be passed to the view is stored
+
+  current_time = datetime.now()
+
+  for unique_venue in unique_venues:
+
+    venue_data = [] # An array that stores all the venues in each city
+
+    for venue in venues:
+
+      if unique_venue.city == venue.city:
+
+        venue_data.append({
+          "id": venue.id,
+          "name": venue.name,
+          "num_upcoming_shows": len([Show.query.filter(Show.start_time > current_time)])
+        })
+    data.append({
+      "city": unique_venue.city,
+      "state": unique_venue.state,
+      "venues": venue_data
+    })
+
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
   # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+
+  search_term=request.form.get('search_term', '')
+
+  venues = Venue.query.filter(Venue.name.ilike(f'%{search_term}%')).all()
+
   response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+    "count": len(venues),
+    "data": []
   }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+
+  for venue in venues:
+    response['data'].append({
+      "id": venue.id,
+      "name": venue.name,
+    })
+
+  return render_template('pages/search_venues.html', results=response)
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
