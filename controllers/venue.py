@@ -1,7 +1,9 @@
-from flask import request
 from models import Show, Venue
 from datetime import datetime
 
+#============================================================#
+#           DISPLAY VENUES ON VENUE PAGE
+#============================================================#
 
 def venue():
   # Get all the venues from the database
@@ -38,14 +40,12 @@ def venue():
 
 
 
-#----------------------------------------------------------#
-#----------------------------------------------------------#
-#      SEARCH VENUE
-#----------------------------------------------------------#
+#============================================================#
+#                       SEARCH VENUE
+#============================================================#
 
-def search_venue():
+def search_venue(search_term):
     # Get user input from the search bar
-    search_term=request.form.get('search_term', '')
 
     # Search the database for venue names that is similar to the user search input
     venues = Venue.query.filter(Venue.name.ilike(f'%{search_term}%')).all()
@@ -66,7 +66,7 @@ def search_venue():
 
 
 #============================================================#
-#           SHOW VENUE
+#           SHOW  VENUE DETAILS
 #============================================================#
 
 def show_venue(venue_id, format_datetime):
@@ -123,3 +123,10 @@ def show_venue(venue_id, format_datetime):
     "past_shows_count": len(past_shw),
     "upcoming_shows_count": len(upcoming_shw),
     }
+
+
+
+
+#============================================================#
+#           CREATE A NEW VENUE
+#============================================================#

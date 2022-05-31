@@ -26,7 +26,7 @@ from flask_migrate import Migrate
 #---------------------------------------------
 #  Controller Imports
 #---------------------------------------------
-from controllers import venue
+from controllers import venue, artist
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -41,7 +41,6 @@ def create_app():
 
 app = create_app()
 moment = Moment(app)
-# db.init_app(app)
 
 # TODO: connect to a local postgresql database
 migrate = Migrate(app, db)
@@ -86,7 +85,8 @@ def search_venues():
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
 
-  response = venue.search_venue()
+  search_term=request.form.get('search_term', '')
+  response = venue.search_venue(search_term)
 
   return render_template('pages/search_venues.html', results=response)
 
@@ -119,19 +119,21 @@ def create_venue_submission():
   
   try:
     venue = Venue()
-    venue = form.populate_obj(venue)
+    form.populate_obj(venue)
+    print(venue)
 
     db.session.add(venue)
-    # db.session.commit()
+    db.session.commit()
 
     # on successful db insert, flash success
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
   except:
     db.session.rollback()
     flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
+
   finally:
     db.session.close()
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+
   return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -148,16 +150,7 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  data = Artist.query.all()
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -165,15 +158,11 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+
+  search_term=request.form.get('search_term', '')
+  response = artist.search_artist(search_term)
+
+  return render_template('pages/search_artists.html', results=response)
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
