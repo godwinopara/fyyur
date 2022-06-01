@@ -110,6 +110,7 @@ def show_venue(venue_id, format_datetime):
     "id": venues.id,
     "name": venues.name,
     "genres": venues.genres,
+    "address": venues.address,
     "city": venues.city,
     "state": venues.state,
     "phone": venues.phone,

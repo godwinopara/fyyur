@@ -9,7 +9,6 @@ from flask import (
   Flask, 
   render_template, 
   request, 
-  Response, 
   flash, 
   redirect, 
   url_for
@@ -23,13 +22,15 @@ from forms import *
 from models import db, Venue, Artist, Show
 from flask_migrate import Migrate
 
-#---------------------------------------------
-#  Controller Imports
-#---------------------------------------------
+#================================================================#
+#=====================Controller Imports=========================#
+#================================================================#
 from controllers import venue, artist
-#----------------------------------------------------------------------------#
-# App Config.
-#----------------------------------------------------------------------------#
+
+
+#=================================================================#
+#                       App Config.
+#=================================================================#
 
 def create_app():
   app = Flask(__name__)
@@ -44,6 +45,8 @@ moment = Moment(app)
 
 # TODO: connect to a local postgresql database
 migrate = Migrate(app, db)
+
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -81,6 +84,11 @@ def venues():
   return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
+
+
+#==================================================================#
+#========================== SEARCH VENUES =========================#
+
 def search_venues():
   # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
@@ -95,21 +103,21 @@ def search_venues():
 
 #======================================================================#
 #========================= SHOW VENUE =================================#
-
+#======================================================================#
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_i
 
-  venue = venue.show_venue(venue_id, format_datetime)
+  venue_data = venue.show_venue(venue_id, format_datetime)
 
-  return render_template('pages/show_venue.html', venue=venue)
+  return render_template('pages/show_venue.html', venue=venue_data)
 
 
-
-#  Create Venue
-#  ----------------------------------------------------------------
+#=======================================================================#
+#============================Create Venue===============================#
+#-----------------------------------------------------------------------#
 
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
@@ -142,6 +150,10 @@ def create_venue_submission():
 
   return render_template('pages/home.html')
 
+
+#======================================================================#
+#========================== DELETE VENUE ==============================#
+
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
@@ -151,8 +163,13 @@ def delete_venue(venue_id):
   # clicking that button delete it from the db then redirect the user to the homepage
   return None
 
-#  Artists
-#  ----------------------------------------------------------------
+
+#=======================================================================#
+#=========================== Artists ===================================#
+                # DISPLAY ALL ARTIST ON THE WEBPAGE
+#-----------------------------------------------------------------------#
+
+
 @app.route('/artists')
 
 def artists():
@@ -161,6 +178,8 @@ def artists():
   return render_template('pages/artists.html', artists=data)
 
 
+#========================================================================#
+#========================== SEARCH ARTIST ===============================#
 
 @app.route('/artists/search', methods=['POST'])
 
@@ -185,9 +204,11 @@ def show_artist(artist_id):
 
   return render_template('pages/show_artist.html', artist=data)
 
-#=================================================================
-#                        UPDATE
-#=================================================================
+
+
+#=================================================================#
+#=========================UPDATE ARTIST===========================#
+#=================================================================#
 
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 
@@ -226,6 +247,9 @@ def edit_artist_submission(artist_id):
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
+
+#=====================================================================#
+#============================ EDIT VENUE =============================#
 
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
