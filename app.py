@@ -6,7 +6,8 @@ import json
 import dateutil.parser
 import babel
 from flask import (
-  Flask, 
+  Flask,
+  jsonify, 
   render_template, 
   request, 
   flash, 
@@ -158,10 +159,25 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  
+  try:
+    venue = Venue.query.get(venue_id)
+
+    db.session.delete(venue)
+    db.session.commit()
+
+    flash('Venue: ' + venue.name + ' was DELETED successfully!')
+  except:
+    db.session.rollback()
+
+    flash('Venue: ' + venue.name + ' was NOT DELETED an Error Occured!')
+  finally:
+    db.session.close()
+
 
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  return jsonify({"success": True})
 
 
 #=======================================================================#
@@ -265,6 +281,24 @@ def edit_venue(venue_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
+
+  form = VenueForm()
+  
+  try:
+    venue = Venue.query.get(venue_id)
+    form.populate_obj(venue)
+    db.session.commit()
+
+    flash(f'Venue: {form.name.data} was updated successfully')
+
+  except:
+
+    db.session.rollback()
+    flash(f'Venue {form.name.data} was not updated an Error Occurred')
+
+  finally:
+    db.session.close()
+
   # venue record with ID <venue_id> using the new attributes
   return redirect(url_for('show_venue', venue_id=venue_id))
 

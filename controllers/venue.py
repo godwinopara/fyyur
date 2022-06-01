@@ -124,10 +124,3 @@ def show_venue(venue_id, format_datetime):
     "past_shows_count": len(past_shw),
     "upcoming_shows_count": len(upcoming_shw),
     }
-
-
-
-
-#============================================================#
-#           CREATE A NEW VENUE
-#============================================================#
