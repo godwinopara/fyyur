@@ -141,7 +141,7 @@ def create_venue_submission():
     db.session.commit()
 
     # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    flash('Venue ' + form.name.data + ' was successfully listed!')
   except:
     db.session.rollback()
     flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
@@ -164,7 +164,8 @@ def delete_venue(venue_id):
     venue = Venue.query.get(venue_id)
 
     db.session.delete(venue)
-    db.session.commit()
+    # db.session.commit()
+    print(venue.name)
 
     flash('Venue: ' + venue.name + ' was DELETED successfully!')
   except:
