@@ -1,4 +1,4 @@
-from models import db, Artist
+from models import Artist, Show
 from datetime import datetime
 
 
@@ -31,7 +31,7 @@ def search_artist(search_term):
 #============================================
 
 
-def show_artist_details(Artist, Show, artist_id, format_datetime):
+def show_artist(artist_id, format_datetime):
 
     # Get the artist_id which information will be displayed
     artist = Artist.query.get(artist_id)
@@ -40,7 +40,7 @@ def show_artist_details(Artist, Show, artist_id, format_datetime):
     current_date = datetime.now()
 
     # Get the shows the artist have performed in and the venues
-    artist_shows = Show.query.join('artist').join('venue').filter(Show.artist_id == artist_id)
+    artist_shows = Show.query.filter(Show.artist_id == artist_id)
     
 
     p_shows = [] # An array that hold past_shows
