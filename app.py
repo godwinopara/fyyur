@@ -58,17 +58,18 @@ def format_datetime(value, format='medium'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
-#----------------------------------------------------------------------------#
-# Controllers.
-#----------------------------------------------------------------------------#
+#===========================================================================#
+#                             Controllers.
+#===========================================================================#
 
 @app.route('/')
 def index():
   return render_template('pages/home.html')
 
 
-#  Venues
-#  ----------------------------------------------------------------
+#=================================================================#
+#========================= Venues ================================#
+#  ---------------------------------------------------------------#
 
 @app.route('/venues')
 def venues():
@@ -89,6 +90,12 @@ def search_venues():
   response = venue.search_venue(search_term)
 
   return render_template('pages/search_venues.html', results=response)
+
+
+
+#======================================================================#
+#========================= SHOW VENUE =================================#
+
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
@@ -277,8 +284,10 @@ def create_artist_submission():
   return render_template('pages/home.html')
 
 
-#  Shows
-#  ----------------------------------------------------------------
+#================================================================#
+#======================= SHOWS ==================================#
+#             DISPLAY ALL SHOW ON THE WEBPAGE
+#================================================================#
 
 @app.route('/shows')
 def shows():
@@ -301,11 +310,16 @@ def shows():
     })
   return render_template('pages/shows.html', shows=data)
 
+
+#=========================================================#
+#================== CREATE SHOW ==========================#
+
 @app.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
+
 
 @app.route('/shows/create', methods=['POST'])
 
@@ -334,6 +348,11 @@ def create_show_submission():
 
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
+
+
+#=============================================================#
+#================  ERROR HANDLERS  ===========================#
+#=============================================================#
 
 @app.errorhandler(404)
 def not_found_error(error):
