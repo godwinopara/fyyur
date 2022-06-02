@@ -51,7 +51,7 @@ class VenueForm(FlaskForm):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone', validators=[DataRequired(), ]
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link'
@@ -88,6 +88,7 @@ class VenueForm(FlaskForm):
             self.state.errors.append('Invalid state.')
             return False
         # if pass validation
+        print(self)
         return True
 
 

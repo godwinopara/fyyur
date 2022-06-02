@@ -83,3 +83,4 @@ def show_artist(artist_id, format_datetime):
     "past_shows_count": len(p_shows),
     "upcoming_shows_count": len(u_shows),
     }
+    

@@ -134,14 +134,14 @@ def create_venue_submission():
   form = VenueForm(request.form)
   
   try:
-    venue = Venue()
-    form.populate_obj(venue)
+      venue = Venue()
+      form.populate_obj(venue)
 
-    db.session.add(venue)
-    db.session.commit()
+      db.session.add(venue)
+      # db.session.commit()
 
-    # on successful db insert, flash success
-    flash('Venue ' + form.name.data + ' was successfully listed!')
+      # on successful db insert, flash success
+      flash('Venue ' + form.name.data + ' was successfully listed!')
   except:
     db.session.rollback()
     flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
@@ -218,7 +218,7 @@ def show_artist(artist_id):
   # TODO: replace with real artist data from the artist table, using artist_id
   
   data = artist.show_artist(artist_id, format_datetime)
-
+  
   return render_template('pages/show_artist.html', artist=data)
 
 
@@ -248,12 +248,14 @@ def edit_artist_submission(artist_id):
   form = ArtistForm()
   
   try:
-    artist = Artist.query.get(artist_id)
+    
+    if form.validate_on_submit():
+      artist = Artist.query.get(artist_id)
   
-    form.populate_obj(artist)
-    db.session.commit()
+      form.populate_obj(artist)
+      db.session.commit()
 
-    flash(f'Artist: {form.name.data} was updated successfully')
+      flash(f'Artist: {form.name.data} was updated successfully')
 
   except:
 
