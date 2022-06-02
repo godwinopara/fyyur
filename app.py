@@ -249,9 +249,9 @@ def edit_artist_submission(artist_id):
   
   try:
     artist = Artist.query.get(artist_id)
-
+  
     form.populate_obj(artist)
-    # db.session.commit()
+    db.session.commit()
 
     flash(f'Artist: {form.name.data} was updated successfully')
 
