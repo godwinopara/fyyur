@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField

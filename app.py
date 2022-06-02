@@ -164,7 +164,7 @@ def delete_venue(venue_id):
     venue = Venue.query.get(venue_id)
 
     db.session.delete(venue)
-    # db.session.commit()
+    db.session.commit()
     print(venue.name)
 
     flash('Venue: ' + venue.name + ' was DELETED successfully!')
@@ -231,8 +231,9 @@ def show_artist(artist_id):
 
 def edit_artist(artist_id):
 
-  form = ArtistForm()
   artist = Artist.query.get(artist_id)
+  
+  form = ArtistForm(obj=artist)
 
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
@@ -248,8 +249,9 @@ def edit_artist_submission(artist_id):
   
   try:
     artist = Artist.query.get(artist_id)
+
     form.populate_obj(artist)
-    db.session.commit()
+    # db.session.commit()
 
     flash(f'Artist: {form.name.data} was updated successfully')
 
@@ -273,8 +275,8 @@ def edit_artist_submission(artist_id):
 
 def edit_venue(venue_id):
 
-  form = VenueForm()
   venue = Venue.query.get(venue_id)
+  form = VenueForm(obj=venue)
 
   # TODO: populate form with values from venue with ID <venue_id>
   return render_template('forms/edit_venue.html', form=form, venue=venue)
